@@ -1,0 +1,44 @@
+{
+  "compilerOptions": {
+    "baseUrl": "./",
+    "module": "ESNext",
+    "target": "ESNext",
+    "moduleResolution": "bundler",
+    "isolatedModules": true,
+    "useDefineForClassFields": true,
+    "skipLibCheck": true,
+
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "ScriptHost"],
+
+    "paths": {
+      "@/*": [
+        "src/*",
+      ],
+      "@src/*": [
+        "src/app/*",
+      ],
+      "@features/*": [
+        "src/features/*",
+      ]
+    },
+
+    "types": [
+      "vite/client",
+      "vite-plugin-pages/client",
+    ]
+  },
+
+  "include": [
+    "auto-imports.d.ts",
+    "env.d.ts",
+    "shims.d.ts",
+    "vite.config.*",
+    "src/**/*.ts",
+    "src/**/*.vue"
+  ],
+
+  "exclude": [
+    "dist",
+    "node_modules"
+  ],
+}
