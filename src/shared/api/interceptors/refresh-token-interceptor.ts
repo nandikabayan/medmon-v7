@@ -9,7 +9,6 @@ import { stateManagement } from '@/app/store/app-store';
 export function refreshTokenInterceptor(axiosIns: AxiosInstance) {
   axiosIns.interceptors.response.use(
     (response: AxiosResponse) => response,
-
     async (error: AxiosError) => {
       const store = stateManagement();
       const refresh_token = store.getRefreshToken || '';
@@ -26,8 +25,6 @@ export function refreshTokenInterceptor(axiosIns: AxiosInstance) {
 
       if (error.response?.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-
-        
 
         try {
           // REQUEST REFRESH TOKEN
