@@ -1,5 +1,4 @@
-import axiosIns from '@/shared/api/axios';
-import { i } from 'node_modules/unplugin-auto-import/dist/types-yRPzhWtG.mjs';
+import { http } from '@/shared/api';
 
 /** DTO dari backend */
 export interface LoginResponseDTO {
@@ -28,15 +27,19 @@ export interface LoginPayload {
 export async function loginApi(
   payload: LoginPayload
 ): Promise<LoginResponseDTO> {
-  const form_data = new FormData();
-  Object.entries({
-    username: payload.username,
-    password: payload.password,
-    remember_me: payload.remember_me,
-  }).forEach(([key, value]) => {
-    form_data.append(key, value)
-  });
+  const form_data = new FormData()
 
-  const response = await axiosIns.post("/be-auth/login", form_data);
-  return response.data;
+  form_data.append('username', payload.username);
+  form_data.append('password', payload.password);
+  form_data.append('remember_me', String(payload.remember_me));
+
+  // const response = await axiosIns.post("/be-auth/login", form_data);
+  return http<LoginResponseDTO>({
+    url: '/be-auth/login',
+    method: 'POST',
+    data: form_data,
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 }

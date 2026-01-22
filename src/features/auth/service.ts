@@ -1,5 +1,5 @@
-import { loginApi } from "@/features/login/api";
-import { mapUserDtoToUser } from "@/features/login/mapper";
+import { loginApi } from "@/features/auth/api";
+import { mapUserDtoToUser } from "@/features/auth/mapper";
 import { stateManagement } from "@/app/store/app-store";
 
 interface LoginParams {

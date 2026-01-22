@@ -1,27 +1,22 @@
 import { stateManagement } from '@/app/store/app-store';
-import { createRouter, createWebHistory } from "vue-router";
-import routes from "virtual:generated-pages";
+import { createRouter, createWebHistory } from 'vue-router';
+import routes from 'virtual:generated-pages';
 
+import { verifyTokenGuard } from '@/app/guards/verify-token-guards';
 import { isRoutesPermitted } from "@/app/router/rules-routes";
-import { verifyTokenGuard } from '@/shared/api/interceptors/verify-interceptor';
 
 const extraRoutes = [
   {
     path: '/',
     name: 'index',
-    redirect: (to) => {
-      return { path: "dashboard" };
-    },
+    redirect: { path: 'dashboard' },
   },
-]
+];
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
-  routes: [
-    ...routes,
-    ...extraRoutes
-  ]
-})
+  routes: [...routes, ...extraRoutes],
+});
 
 router.beforeEach(async (to, from, next) => {
   const store = stateManagement();
@@ -57,7 +52,7 @@ router.beforeEach(async (to, from, next) => {
   }
 
   next();
-})
+});
 
 router.afterEach((to) => {
   // document.title = `${handlerBilingual(to.meta.title)} | Online Media Monitoring`;

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { loginService } from "@/features/login/service";
+import { loginService } from "@/features/auth/service";
 import { encryptPassword } from "@/shared/utils";
 
 const form_data = ref({ 

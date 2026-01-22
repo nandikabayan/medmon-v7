@@ -1,6 +1,6 @@
-import type { LoginResponseDTO } from "@/features/login/api";
-import type { User } from "@/features/login/model";
-import { createUser } from "@/features/login/model";
+import type { LoginResponseDTO } from "@/features/auth/api";
+import type { User } from "@/features/auth/model";
+import { createUser } from "@/features/auth/model";
 
 export function mapUserDtoToUser(dto: LoginResponseDTO["user_data"]): User {
   return createUser({

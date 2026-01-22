@@ -1,58 +1,18 @@
-import type {
-  AxiosError,
-  AxiosInstance,
-  AxiosResponse,
-  InternalAxiosRequestConfig,
-} from 'axios';
-import { stateManagement } from '@/app/store/app-store';
+import type { AxiosError } from 'axios';
 
-export function refreshTokenInterceptor(axiosIns: AxiosInstance) {
-  axiosIns.interceptors.response.use(
-    (response: AxiosResponse) => response,
-    async (error: AxiosError) => {
-      const store = stateManagement();
-      const refresh_token = store.getRefreshToken || '';
-      const user_id = store.getUser.id || '';
+type RefreshFn = () => Promise<void>;
 
-      if (!refresh_token) {
-        store.logoutHandler();
-        return Promise.reject(error);
-      }
-      
-      const originalRequest = error.config as InternalAxiosRequestConfig & {
-        _retry?: boolean;
-      };
+let refreshToken: RefreshFn | null = null;
 
-      if (error.response?.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
+export function setupRefreshToken(fn: RefreshFn) {
+  refreshToken = fn;
+}
 
-        try {
-          // REQUEST REFRESH TOKEN
-          const res = await axiosIns.post('be-auth/refresh-token', {
-            refresh_token,
-            user_id,
-          });
-
-          const { access_token, refresh_token: new_refresh_token } = res.data;
-
-          // SAVE TOKEN
-          store.tokenHandler(access_token, new_refresh_token);
-
-          // UPDATE AUTH HEADER
-          originalRequest.headers.set(
-            'Authorization',
-            `Bearer ${access_token}`
-          );
-
-          // RETRY ORIGINAL REQUEST
-          return axiosIns(originalRequest);
-        } catch (err) {
-          store.logoutHandler();
-          return Promise.reject(err);
-        }
-      }
-
-      return Promise.reject(error);
-    }
-  );
+export async function refreshTokenInterceptor(
+  error: AxiosError
+) {
+  if (error.response?.status === 401 && refreshToken) {
+    await refreshToken();
+  }
+  return Promise.reject(error);
 }
