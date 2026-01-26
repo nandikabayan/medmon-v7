@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { loginService } from "@/features/auth/service";
-import { encryptPassword } from "@/shared/utils";
+import { encryptPassword } from "@/shared/lib/crypto-lib";
 
 const form_data = ref({ 
   username: null,

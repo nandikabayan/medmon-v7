@@ -1,5 +1,5 @@
 import type { AxiosRequestConfig } from 'axios';
-import { axiosInstance } from '@/shared/api/axios';
+import { axiosInstance } from './axios';
 
 export async function http<T>(
   config: AxiosRequestConfig

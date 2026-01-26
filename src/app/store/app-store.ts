@@ -55,7 +55,6 @@ export const stateManagement = defineStore("medmon-management", {
             cookie.remove("mv6_enum_type_account");
             cookie.remove("mv6_filter_additional");
       
-      
             // REMOVE LOCALSTORAGE
             localStorage.removeItem("mv6_content_keyword");
 
