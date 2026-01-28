@@ -1,20 +1,24 @@
 import { axiosInstance } from '@/shared/api/axios';
 
-import { authInterceptor } from '@/shared/api/interceptors/auth.interceptor';
-import { refreshTokenInterceptor } from '@/shared/api/interceptors/refresh-token.interceptor';
-import { errorInterceptor } from '@/shared/api/interceptors/error.interceptor';
+import { authInterceptor } from './interceptors/auth.interceptor';
+import { createRefreshTokenInterceptor } from './interceptors/refresh-token.interceptor';
+import { errorInterceptor } from './interceptors/error.interceptor';
 
+// REQUEST
 axiosInstance.interceptors.request.use(authInterceptor);
+
+// RESPONSE
 axiosInstance.interceptors.response.use(
   (res) => res,
-  refreshTokenInterceptor
+  createRefreshTokenInterceptor(axiosInstance)
 );
+
 axiosInstance.interceptors.response.use(
   (res) => res,
   errorInterceptor
 );
 
-export * from '@/shared/api/http';
-export * from '@/shared/api/types';
-export * from '@/shared/api/interceptors/auth.interceptor';
-export * from '@/shared/api/interceptors/refresh-token.interceptor';
+export * from './http';
+export * from './types';
+export * from './interceptors/auth.interceptor';
+export * from './interceptors/refresh-token.interceptor';

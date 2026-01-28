@@ -1,18 +1,49 @@
-import type { AxiosError } from 'axios';
+import type {
+  AxiosError,
+  AxiosInstance,
+  AxiosRequestConfig,
+} from 'axios';
 
-type RefreshFn = () => Promise<void>;
+type RefreshFn = () => Promise<string | null>;
 
-let refreshToken: RefreshFn | null = null;
+let refreshTokenFn: RefreshFn | null = null;
 
 export function setupRefreshToken(fn: RefreshFn) {
-  refreshToken = fn;
+  refreshTokenFn = fn;
 }
 
-export async function refreshTokenInterceptor(
-  error: AxiosError
+export function createRefreshTokenInterceptor(
+  axios: AxiosInstance
 ) {
-  if (error.response?.status === 401 && refreshToken) {
-    await refreshToken();
-  }
-  return Promise.reject(error);
+  return async function refreshTokenInterceptor(
+    error: AxiosError
+  ) {
+    const originalRequest = error.config as
+      | (AxiosRequestConfig & { _retry?: boolean })
+      | undefined;
+
+    if (
+      error.response?.status === 401 &&
+      refreshTokenFn &&
+      originalRequest &&
+      !originalRequest._retry
+    ) {
+      originalRequest._retry = true;
+
+      const newAccessToken = await refreshTokenFn();
+
+      if (!newAccessToken) {
+        return Promise.reject(error);
+      }
+
+      originalRequest.headers = {
+        ...originalRequest.headers,
+        Authorization: `Bearer ${newAccessToken}`,
+      };
+
+      return axios(originalRequest);
+    }
+
+    return Promise.reject(error);
+  };
 }

@@ -8,16 +8,15 @@ let getLanguage: GetLanguageFn | null = null;
 
 export function setupAuthInterceptor(
   tokenFn: GetTokenFn,
-  languageFn: GetLanguageFn
+  languageFn?: GetLanguageFn
 ) {
   getToken = tokenFn;
-  getLanguage = languageFn;
+  getLanguage = languageFn ?? null;
 }
 
 export function authInterceptor(
   config: InternalAxiosRequestConfig
 ): InternalAxiosRequestConfig {
-  // Authorization
   if (getToken) {
     const token = getToken();
     if (token) {
@@ -25,7 +24,6 @@ export function authInterceptor(
     }
   }
 
-  // Language header
   if (getLanguage) {
     const lang = getLanguage();
     if (lang) {

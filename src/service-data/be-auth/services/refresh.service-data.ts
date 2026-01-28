@@ -1,13 +1,22 @@
 import { http } from '@/shared/api/http';
 
-export async function verifyAuthToken(): Promise<boolean> {
-  try {
-    await http({
-      method: 'GET',
-      url: 'be-auth/verify',
-    });
-    return true;
-  } catch {
-    return false;
-  }
+export type RefreshTokenResponse = {
+  access_token: string;
+  refresh_token: string;
+};
+
+export async function requestRefreshToken(
+  refresh_token: string,
+  user_id: string
+): Promise<RefreshTokenResponse> {
+  const res = await http<RefreshTokenResponse>({
+    method: 'POST',
+    url: 'be-auth/refresh-token',
+    data: {
+      refresh_token,
+      user_id,
+    },
+  });
+
+  return res;
 }
