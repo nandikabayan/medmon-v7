@@ -1,10 +1,9 @@
-import { stateManagement } from '@/app/store/app-store';
 import { createRouter, createWebHistory } from 'vue-router';
 import routes from 'virtual:generated-pages';
 
-import { verifyTokenGuard } from '@/app/guards/verify-token-guards';
-import { isRoutesPermitted } from "@/app/router/rules-routes";
+import { middleware } from './middleware/rules.middleware';
 
+const skipVerifyRoutes = ['login', 'archive', 'view'];
 const extraRoutes = [
   {
     path: '/',
@@ -19,19 +18,13 @@ const router = createRouter({
 });
 
 router.beforeEach(async (to, from, next) => {
-  const store = stateManagement();
 
   if (to.path === '/error-404') {
     return next();
   }
 
-  // CHECK PERMISSION
-  const isPermitted = isRoutesPermitted(
-    store.getUser,
-    store.project ,
-    to.path
-  );
-
+  const isPermitted = middleware.isPermitted(to.path);
+  
   if (!isPermitted) {
     return next({ path: 'error-404' });
   }
@@ -42,10 +35,8 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // VERIFY TOKEN (SKIP SOME ROUTES)
-  const skipVerifyRoutes = ['login', 'archive', 'view'];
-
   if (!skipVerifyRoutes.includes(String(to.name))) {
-    const verified = await verifyTokenGuard();
+    const verified = await middleware.verifyToken();
     if (!verified) {
       return next({ name: 'login' });
     }
@@ -55,7 +46,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach((to) => {
-  // document.title = `${handlerBilingual(to.meta.title)} | Online Media Monitoring`;
+  document.title = `- | Online Media Monitoring`;
 });
 
 export default router;

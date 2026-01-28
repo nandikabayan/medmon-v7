@@ -44,20 +44,6 @@ export const stateManagement = defineStore("medmon-management", {
         setStoreLocalStorage(key: string, value: string[]) {
         },
         logoutHandler() {
-            // REMOVE COOKIE
-            cookie.remove("mv6_formed_active");
-            cookie.remove("mv6_socmed_active");
-            cookie.remove("mv6_filter_validated");
-            cookie.remove("mv6_filter_group");
-            cookie.remove("mv6_filter_topic");
-            cookie.remove("mv6_enum_press_status");
-            cookie.remove("mv6_filter_additional");
-            cookie.remove("mv6_enum_type_account");
-            cookie.remove("mv6_filter_additional");
-      
-            // REMOVE LOCALSTORAGE
-            localStorage.removeItem("mv6_content_keyword");
-
             window.location.href = "/login";
         },
     },
@@ -66,8 +52,13 @@ export const stateManagement = defineStore("medmon-management", {
         getAccessToken: (state) => state.access_token,
         getRefreshToken: (state) => state.refresh_token,
         getUser: (state) => state.user || {},
-        getLanguage: (state) => state.language,
         getProject: (state) => state.project || null,
         getFeatureProject: (state) => state.project_feature || [],
+        getFilterHeader: (state) => state.filter_header || [],
+        getEnumOption: (state) => state.enum_option || [],
+        getContentKeyword: (state) => state.content_keyword || [],
+        getVersionApps: (state) => state.version_apps || [],
+        getTheme: (state) => state.theme || [],
+        getLanguage: (state) => state.language || "ID",
     },
 });

@@ -2,5 +2,4 @@
 </script>
 
 <template>
-    <FormLogin />
 </template>
