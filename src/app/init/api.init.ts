@@ -6,16 +6,21 @@ export function initApi() {
   const store = stateManagement();
 
   setupRefreshToken(async () => {
-    const res = await requestRefreshToken(
-      store.getRefreshToken,
-      store.getUser.id || ""
-    );
+    try {
+      const res = await requestRefreshToken(
+        store.getRefreshToken,
+        store.getUser.id || ""
+      );
 
-    store.tokenHandler(
-      res.access_token,
-      res.refresh_token
-    );
+      store.tokenHandler(
+        res.access_token,
+        res.refresh_token
+      );
 
-    return res.access_token;
+      return res.access_token;
+    } catch (error) {
+      store.logoutHandler();
+      throw error;
+    }
   });
 }

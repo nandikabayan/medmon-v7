@@ -3,19 +3,44 @@ const modules = import.meta.glob(
   { eager: true }
 ) as Record<string, Record<string, Function>>
 
-export function useHook(registry: string) {
-  const hookFile = Object.entries(modules).find(([path]) =>
-    path.toLowerCase().endsWith(`${registry.toLowerCase()}.usecase.ts`)
-  )
-
-  if (!hookFile) {
-    throw new Error(`Hook "${registry}" not found`)
+function createEmptyHook(name: string) {
+  const warn = (msg: string) => {
+    if (import.meta.env.DEV) {
+      console.warn(`[useHook] ${msg}`)
+    }
   }
 
-  const [, mod] = hookFile
+  warn(`Hook "${name}" not found`)
 
+  return new Proxy(
+    {},
+    {
+      get(_, prop) {
+        warn(`"${String(prop)}" called on missing hook "${name}"`)
+        return () => {}
+      }
+    }
+  )
+}
+
+export function useHook(registry: string) {
+  const normalized = registry.toLowerCase()
+
+  const entry = Object.entries(modules).find(([path]) =>
+    path.toLowerCase().endsWith(`${normalized}.usecase.ts`)
+  )
+
+  if (!entry) return createEmptyHook(registry)
+
+  const [, mod] = entry
   const hookName =
     `use${registry.charAt(0).toUpperCase()}${registry.slice(1)}`
 
-  return mod[hookName]()
+  const hook = mod[hookName]
+
+  if (typeof hook !== 'function') {
+    return createEmptyHook(registry)
+  }
+
+  return hook()
 }

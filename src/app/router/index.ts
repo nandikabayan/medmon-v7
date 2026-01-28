@@ -38,7 +38,6 @@ router.beforeEach(async (to, from, next) => {
   if (!skipVerifyRoutes.includes(String(to.name))) {
     const verified = await middleware.verifyToken();
     if (!verified) {
-      middleware.logout();
       return next({ name: 'login' });
     }
   }
