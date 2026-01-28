@@ -14,6 +14,7 @@ export function errorInterceptor(
     code: (error.response?.data as any)?.code,
     message:
       (error.response?.data as any)?.message ??
+      (error.response?.data as any)?.detail ??
       error.message ??
       'Unknown error',
   };
